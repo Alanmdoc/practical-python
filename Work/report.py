@@ -5,58 +5,64 @@ def read_portfolio(filename):
     portfolio = []
     with open(filename, 'r') as file:
         rows = csv.reader(file)
-        headers = next(rows)  # Skip header row
+        headers = next(rows) # Skipping headers
+
         for rowno, row in enumerate(rows, start=1):
-        	record = dict(zip(headers, row))
+            record = dict(zip(headers, row))
             if len(row) < 3:
-                print(f"Skipping malformed row: {rowno}")
+                #print(f"Skipping malformed row: {rowno}")
                 continue
             try:
-                holding = {
-                    'symbol': row[0].strip(),
-                    'shares': int(row[1].strip()),
-                    'price': float(row[2].strip())
+                stock = {
+                    'name'  : record['name'],
+                    'shares': int(record['shares']),
+                    'price' : float(record['price'])
                 }
             except ValueError:
                 print(f"Row: {rowno}. Bad row: {row}")
                 continue
-            portfolio.append(holding)
+            portfolio.append(stock) # portfolio = list of dictionaries
     return portfolio
 
 def read_prices(filename):
     """Read a CSV file containing current prices and return a dictionary."""
-    prices = {}
+    prices = {} #dictionary
     with open(filename, 'r') as file:
         reader = csv.reader(file)
         for row in reader:
             if len(row) < 2:
-                print(f"Skipping malformed row: {row}")
+                #print(f"Skipping malformed row: {row}")
                 continue
             try:
-                symbol = row[0].strip()
-                price = float(row[1].strip())
-                prices[symbol] = price
-            except ValueError as e:
-                print(f"Couldn't parse row: {row}. Error: {e}")
-                continue
+                prices[row[0]] = float(row[1])
+            except IndexError:
+                pass
     return prices
 
-def compute_portfolio_value(portfolio, prices):
-    """Compute the current value of the portfolio."""
-    total_value = 0.0
-    for holding in portfolio:
-        symbol = holding['symbol']
-        shares = holding['shares']
-        purchase_price = holding['price']
-        current_price = prices.get(symbol, 0.0)
-        holding_value = shares * current_price
-        total_value += holding_value
-        gain_loss = (current_price - purchase_price) * shares
-        print(f"{symbol}: Purchase Price = {purchase_price}, Current Price = {current_price}, Shares = {shares}, Gain/Loss = {gain_loss}")
-    return total_value
+# Read data files and create the report data  
+portfolio = read_portfolio('data/portfolio.csv')
+prices    = read_prices('data/prices.csv')
 
-# Example usage
-portfolio = read_portfolio('C:\\Users\\Alan\\Desktop\\Python tut\\practical-python\\Work\\Data\\portfolio.csv')
-prices = read_prices('C:\\Users\\Alan\\Desktop\\Python tut\\practical-python\\Work\\Data\\prices.csv')
-total_value = compute_portfolio_value(portfolio, prices)
-print(f"Total current value of the portfolio: {total_value}")
+def generate_report(portfolio, prices):
+    '''These statements should take the list of stocks in Exercise 2.5
+    and the dictionary of prices in Exercise 2.6 and compute the current
+    value of the portfolio along with the gain/loss.'''
+    rows = []
+
+    for stock in portfolio:
+        current_price = prices[stock['name']] #using the name of the stock in the portfolio.csv to look it up in the prices.csv file
+        change        = current_price - stock['price']
+        summary       = (stock['name'], stock['shares'], current_price, change)
+        rows.append(summary)
+    return rows
+
+# Generate the report data
+
+report = generate_report(portfolio, prices)
+
+# Output the report
+headers = ('Name', 'Shares', 'Price', 'Change')
+print('%10s %10s %10s %10s' % headers)
+print(('-' * 10 + ' ') * len(headers))
+for row in report:
+    print('%10s %10d %10.2f %10.2f' % row)

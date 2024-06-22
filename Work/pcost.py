@@ -18,20 +18,11 @@ def portfolio_cost(filename):
 			except ValueError:
 				print(f'Rows {rowno}: Bad row: {row}')
 				continue
-			'''try:
-				prices = float(row[2].rstrip())
-			except ValueError:
-				print(f'Row {rowno}: Bad row: {row}')
-				continue
-			total_cost += shares * prices'''
 		return total_cost
-
 if len(sys.argv) == 2:
     filename = sys.argv[1]
 else:
-	print("File name (e.g Data/filename.csv): ")
-	filename = input()
+	filename = 'Data/portfolio.csv'
 
 cost = portfolio_cost(filename)
-
 print("Total cost", cost)
