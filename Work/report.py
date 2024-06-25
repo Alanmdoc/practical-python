@@ -39,16 +39,8 @@ def read_prices(filename):
                 pass
     return prices
 
-# Read data files and create the report data  
-portfolio = read_portfolio('data/portfolio.csv')
-prices    = read_prices('data/prices.csv')
-
 def generate_report(portfolio, prices):
-    '''These statements should take the list of stocks in Exercise 2.5
-    and the dictionary of prices in Exercise 2.6 and compute the current
-    value of the portfolio along with the gain/loss.'''
     rows = []
-
     for stock in portfolio:
         current_price = prices[stock['name']] #using the name of the stock in the portfolio.csv to look it up in the prices.csv file
         change        = current_price - stock['price']
@@ -56,13 +48,27 @@ def generate_report(portfolio, prices):
         rows.append(summary)
     return rows
 
-# Generate the report data
+def portfolio_report(portfoliofile,pricefile):        
+    '''
+    Make a stock report given portfolio and price data files.
+    '''
+    # Read data files 
+    portfolio = read_portfolio(portfoliofile)
+    prices = read_prices(pricefile)
 
-report = generate_report(portfolio, prices)
+    # Create the report data
+    report = generate_report(portfolio,prices)
 
-# Output the report
-headers = ('Name', 'Shares', 'Price', 'Change')
-print('%10s %10s %10s %10s' % headers)
-print(('-' * 10 + ' ') * len(headers))
-for row in report:
-    print('%10s %10d %10.2f %10.2f' % row)
+    # Print it out
+    print_report(report)
+
+def print_report(report):
+    # Output the report
+    headers = ('Name', 'Shares', 'Price', 'Change')
+    print('%10s %10s %10s %10s' % headers)
+    print(('-' * 10 + ' ') * len(headers))
+    for row in report:
+        print('%10s %10d %10.2f %10.2f' % row)
+
+portfolio_report('Data/portfolio.csv',
+                 'Data/prices.csv')
