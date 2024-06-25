@@ -1,7 +1,9 @@
 import csv
 
 def read_portfolio(filename):
-    """Read a CSV file containing portfolio data and return a list of dictionaries."""
+    '''
+    Read a CSV file containing portfolio data and return a list of dictionaries.
+    '''
     portfolio = []
     with open(filename, 'r') as file:
         rows = csv.reader(file)
@@ -25,7 +27,9 @@ def read_portfolio(filename):
     return portfolio
 
 def read_prices(filename):
-    """Read a CSV file containing current prices and return a dictionary."""
+    '''
+    Read a CSV file containing current prices and return a dictionary.
+    '''
     prices = {} #dictionary
     with open(filename, 'r') as file:
         reader = csv.reader(file)
@@ -40,6 +44,10 @@ def read_prices(filename):
     return prices
 
 def generate_report(portfolio, prices):
+    '''
+    Make a list of (name, shares, price, change) tuples given a portfolio list
+    and prices dictionary.
+    '''
     rows = []
     for stock in portfolio:
         current_price = prices[stock['name']] #using the name of the stock in the portfolio.csv to look it up in the prices.csv file
@@ -63,7 +71,9 @@ def portfolio_report(portfoliofile,pricefile):
     print_report(report)
 
 def print_report(report):
-    # Output the report
+    '''
+    Print a nicely formated table from a list of (name, shares, price, change) tuples.
+    '''
     headers = ('Name', 'Shares', 'Price', 'Change')
     print('%10s %10s %10s %10s' % headers)
     print(('-' * 10 + ' ') * len(headers))
